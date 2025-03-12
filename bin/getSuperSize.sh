@@ -1,6 +1,7 @@
 #!/bin/bash
 device_code=$1
 case $device_code in
+	OnePlus9Pro) size=11190403072;;
 	OnePlus9R) size=9932111872;;
 	OnePlus8T) size=7516192768;;
 	#Oppo find x3

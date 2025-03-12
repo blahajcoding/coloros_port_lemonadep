@@ -10,7 +10,7 @@
 
 # Test Port ROM: OnePlus 12 (ColorOS_14.0.0.810), OnePlus ACE3V(ColorOS_14.0.1.621) Realme GT Neo5 240W(RMX3708_14.0.0.800)
 
-build_user="Bruce Teng"
+build_user=$(whoami)
 build_host=$(hostname)
 
 # 底包和移植包为外部参数传入
@@ -243,7 +243,7 @@ port_my_product_type=$(< build/portrom/images/my_product/build.prop grep "ro.opl
 
 target_display_id=$(< build/portrom/images/my_manifest/build.prop grep "ro.build.display.id" |awk 'NR==1' |cut -d '=' -f 2 | sed 's/$port_device_code/$base_device_code)/g')
 
-target_display_id_show=$(< build/portrom/images/my_manifest/build.prop grep "ro.build.display.id.show" |awk 'NR==1' |cut -d '=' -f 2 | sed 's/$port_device_code/$base_device_code)/g')
+target_display_id_show=$(< build/portrom/images/my_manifest/build.prop grep "ro.build.display.id.show" | awk 'NR==1' | cut -d '=' -f 2 | sed 's/$port_device_code/$base_device_code/g' | sed 's/(.*)/(ORB)/g')
 green "机型代号: 底包为 [${base_rom_model}], 移植包为 [${port_rom_model}]" "My Product Type: BASEROM: [${base_rom_model}], PORTROM: [${port_rom_model}]"
 
 base_vendor_brand=$(< build/baserom/images/my_manifest/build.prop grep "ro.product.vendor.brand" |awk 'NR==1' |cut -d '=' -f 2)
@@ -521,7 +521,7 @@ rm -rf build/portrom/images/product/recovery-from-boot.p
 blue "正在修改 build.prop" "Modifying build.prop"
 #
 #change the locale to English
-export LC_ALL=en_US.UTF-8
+export LC_ALL=en_GB.UTF-8
 buildDate=$(date -u +"%a %b %d %H:%M:%S UTC %Y")
 buildUtc=$(date +%s)
 for i in $(find build/portrom/images -type f -name "build.prop");do
@@ -584,6 +584,11 @@ update_prop_from_base
 sed -i "s/persist.oplus.software.audio.right_volume_key=.*/persist.oplus.software.audio.right_volume_key=false/g" build/portrom/images/my_product/build.prop
 sed -i "s/persist.oplus.software.alertslider.location=.*/persist.oplus.software.alertslider.location=/g" build/portrom/images/my_product/build.prop
 sed -i "s/persist.sys.oplus.anim_level=.*/persist.sys.oplus.anim_level=2/g" build/portrom/images/my_product/build.prop
+
+$otaver_display=$(grep "ro.build.version.oplusrom.display" --include="*.prop" -r build/baserom/images/my_product | head -n 1 | cut -d "=" -f2)
+
+$new_otaver_display="$otaver_display | $maintainer"
+sed -i 's/ro.build.version.oplusrom.display/"$otaver_display | $maintainer"/g' build/portrom/images/my_product/build.prop
 
 sed -i "/ro.oplus.density.fhd_default/d" build/portrom/images/my_product/build.prop
 sed -i "/ro.oplus.resolution.*/d" build/portrom/images/my_product/build.prop
@@ -816,12 +821,34 @@ add_feature "oplus.hardware.audio.voice_denoise_support" build/portrom/images/my
 
 add_feature "com.oplus.mediaturbo.service" build/portrom/images/my_product/etc/extension/com.oplus.app-features.xml
 
-add_feature 'com.oplus.note.aigc.ai_rewrtie.support" args="boolean:true' build/portrom/images/my_product/etc/extension/com.oplus.app-features.xml
+add_feature 'com.oplus.note.aigc.ai_rewrite.support" args="boolean:true' build/portrom/images/my_product/etc/extension/com.oplus.app-features.xml
 
 #自定义替换
 
 #Devices/机型代码/overlay 按照镜像的目录结构，可直接替换目标。
 if [[ -d "devices/${base_product_device}/overlay" ]]; then
+    if ${base_product_device} == OnePlus9Pro; then
+        rm -f build/portrom/images/odm/lib/libFilterWrapper.so
+        rm -f build/portrom/images/odm/lib/libmindroid-app.so
+        rm -f build/portrom/images/odm/lib/libmindroid-framework.so
+        rm -f build/portrom/images/odm/lib/libPolarrRender.so
+        rm -f build/portrom/images/odm/lib/libsubsys-utils.so
+        rm -f build/portrom/images/odm/lib/libSuperTextWrapper.so
+        rm -f build/portrom/images/odm/lib/vendor.oplus.hardware.charger-V3-ndk_platform.so
+        rm -f build/portrom/images/odm/lib/vendor.oplus.hardware.sendextcamcmd-V1-ndk_platform.so
+        rm -f build/portrom/images/odm/lib/vendor.oplus.hardware.subsys_radio-V1-ndk_platform.so
+        rm -f build/portrom/images/odm/bin/hw/vendor.oplus.hardware.charger-V3-service.so
+        rm -f build/portrom/images/odm/lib64/vendor.oplus.hardware.charger-V3-ndk_platform.so
+        rm -f build/portrom/images/odm/lib64/vendor.oplus.hardware.sendextcamcmd-V1-ndk_platform.so
+        rm -f build/portrom/images/odm/lib64/vendor.oplus.hardware.subsys-V1-ndk_platform.so
+        rm -f build/portrom/images/odm/lib64/vendor.oplus.hardware.subsys_radio-V1-ndk_platform.so
+        rm -f build/portrom/images/odm/etc/init/vendor.oplus.hardware.charger-V3-service.rc
+        rm -f build/portrom/images/vendor/lib/vendor.oplus.hardware.sendextcamcmd-V1-ndk_platform.so
+        rm -f build/portrom/images/vendor/lib64/android.hardware.biometrics.fingerprint@2.1.so
+        rm -f build/portrom/images/vendor/lib64/libqfp-service.so
+        rm -f build/portrom/images/vendor/bin/qfp-daemon
+        rm -f build/portrom/images/endor/etc/bin/init_qfp_daemon.rc
+    fi
     cp -rf devices/${base_product_device}/overlay/* build/portrom/images/
 else
     yellow "devices/${base_product_device}/overlay 未找到" "devices/${base_product_device}/overlay not found" 
@@ -865,10 +892,10 @@ done
 #添加erofs文件系统fstab
 if [ ${pack_type} == "EROFS" ];then
     yellow "检查 vendor fstab.qcom是否需要添加erofs挂载点" "Validating whether adding erofs mount points is needed."
-    if ! grep -q "erofs" build/portrom/images/vendor/etc/fstab.qcom ; then
+    if ! grep -q "erofs" build/portrom/images/vendor/etc/fstab.at.qcom ; then
                for pname in system odm vendor product mi_ext system_ext; do
-                     sed -i "/\/${pname}[[:space:]]\+ext4/{p;s/ext4/erofs/;s/ro,barrier=1,discard/ro/;}" build/portrom/images/vendor/etc/fstab.qcom
-                     added_line=$(sed -n "/\/${pname}[[:space:]]\+erofs/p" build/portrom/images/vendor/etc/fstab.qcom)
+                     sed -i "/\/${pname}[[:space:]]\+ext4/{p;s/ext4/erofs/;s/ro,barrier=1,discard/ro/;}" build/portrom/images/vendor/etc/fstab.at.qcom
+                     added_line=$(sed -n "/\/${pname}[[:space:]]\+erofs/p" build/portrom/images/vendor/etc/fstab.at.qcom)
     
                     if [ -n "$added_line" ]; then
                         yellow "添加$pname" "Adding mount point $pname"
