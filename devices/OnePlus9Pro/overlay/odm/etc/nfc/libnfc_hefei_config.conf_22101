@@ -1,0 +1,62 @@
+###############################################################################
+# Force P2P to only listen for the following technology(s).
+# The bits are defined as tNFA_TECHNOLOGY_MASK in nfa_api.h.
+# Default is NFA_TECHNOLOGY_MASK_A | NFA_TECHNOLOGY_MASK_F |
+#            NFA_TECHNOLOGY_MASK_A_ACTIVE | NFA_TECHNOLOGY_MASK_F_ACTIVE
+#
+# Notable bits:
+# NFA_TECHNOLOGY_MASK_A	            0x01    /* NFC Technology A             */
+# NFA_TECHNOLOGY_MASK_F	            0x04    /* NFC Technology F             */
+# NFA_TECHNOLOGY_MASK_A_ACTIVE      0x40    /* NFC Technology A active mode */
+# NFA_TECHNOLOGY_MASK_F_ACTIVE      0x80    /* NFC Technology F active mode */
+P2P_LISTEN_TECH_MASK=0x44
+
+###############################################################################
+# Force tag polling for the following technology(s).
+# The bits are defined as tNFA_TECHNOLOGY_MASK in nfa_api.h.
+# Default is NFA_TECHNOLOGY_MASK_A | NFA_TECHNOLOGY_MASK_B |
+#            NFA_TECHNOLOGY_MASK_F | NFA_TECHNOLOGY_MASK_ISO15693 |
+#            NFA_TECHNOLOGY_MASK_B_PRIME |
+#            NFA_TECHNOLOGY_MASK_A_ACTIVE | NFA_TECHNOLOGY_MASK_F_ACTIVE.
+#
+# Notable bits:
+# NFA_TECHNOLOGY_MASK_A             0x01    /* NFC Technology A             */
+# NFA_TECHNOLOGY_MASK_B             0x02    /* NFC Technology B             */
+# NFA_TECHNOLOGY_MASK_F             0x04    /* NFC Technology F             */
+# NFA_TECHNOLOGY_MASK_ISO15693      0x08    /* Proprietary Technology       */
+# NFA_TECHNOLOGY_MASK_A_ACTIVE      0x40    /* NFC Technology A active mode */
+# NFA_TECHNOLOGY_MASK_F_ACTIVE      0x80    /* NFC Technology F active mode */
+POLLING_TECH_MASK=0x4F
+
+# NXP_CORE_CONF_EXTN block
+# add A0,   85,   04,   58,   0A,   A8,   AC: fix frequency, guard time 1.2ms and mute RATS issues.
+# NXP_RF_CONF_BLK_1 block
+# A0,   6A,   10,   00,   00,   00,   00,   00,   00,   00,   00,   00,   00,   00,   00,   00,   00,   00,   00
+# NXP_RF_CONF_BLK_6 block nfcld
+# A0,   9E,   0C,   08,   80,   12,   96,   00,   2C,   01,   2B,   52,   03,   00,   00
+# NXP_RF_CONF_BLK_12 block
+# A0,   0D,   06,   82,   82,   43,   80,   00,   00
+# A0,   0D,   06,   80,   82,   4F,   80,   00,   00
+# A0,   0D,   06,   62,   32,   AE,   00,   7F,   00
+# A0,   0D,   06,   67,   32,   AE,   00,   1F,   00
+
+NXP_RF_CONF_BLK_2={
+		  20,   02,   CC,   01,
+          A0,   34,   C8,   23,   04,   3D,   01,   0A,   19,   DA,   05,   00,   00,   10,   06,   00,   00,   7B,   06,   00,   00,   11,   07,   00,   00,   5C,   08,   00,   00,   85,   09,   00,   00,   73,   0A,   00,   00,   7F,   0B,   00,   00,   96,   0D,   00,   00,   36,   0E,   00,   00,   AC,   11,   00,   00,   C4,   11,   00,   00,   CF,   12,   00,   00,   3A,   13,   00,   00,   37,   1C,   00,   00,   42,   1D,   00,   00,   4E,   1E,   00,   00,   59,   1F,   00,   00,   70,   21,   00,   00,   9E,   25,   00,   00,   CC,   29,   00,   00,   B2,   3E,   00,   00,   98,   53,   00,   00,   7E,   68,   00,   00,   02,   19,   DA,   05,   00,   00,   10,   06,   00,   00,   7B,   06,   00,   00,   11,   07,   00,   00,   5C,   08,   00,   00,   85,   09,   00,   00,   73,   0A,   00,   00,   7F,   0B,   00,   00,   96,   0D,   00,   00,   36,   0E,   00,   00,   AC,   11,   00,   00,   C4,   11,   00,   00,   CF,   12,   00,   00,   3A,   13,   00,   00,   37,   1C,   00,   00,   42,   1D,   00,   00,   4E,   1E,   00,   00,   59,   1F,   00,   00,   70,   21,   00,   00,   9E,   25,   00,   00,   CC,   29,   00,   00,   B2,   3E,   00,   00,   98,   53,   00,   00,   7E,   68,   00,   00
+}
+
+OPLUS_CONF_EXTN={
+	      20,   02,   89,   0B,
+	      A1,   0E,   02,   60,   00,
+	      A1,   35,   01,   00,
+	      A0,   85,   04,   50,   08,   A8,   2C,
+	      A0,   6A,   10,   D0,   02,   D0,   02,   D0,   02,   D0,   02,   1C,   02,   1C,   02,   1C,   02,   1C,   02,
+	      A0,   9E,   0C,   07,   5E,   0F,   96,   00,   2C,   01,   2B,   64,   00,   00,   00,
+	      A0,   0D,   06,   82,   82,   49,   80,   00,   00,
+	      A0,   0D,   06,   80,   82,   49,   80,   00,   00,
+	      A0,   0D,   06,   62,   32,   AE,   00,   7F,   00,
+	      A0,   0D,   06,   67,   32,   AE,   00,   1F,   00,
+	      A0,   0D,   06,   80,   7D,   A0,   00,   94,   BF,
+	      A0,   28,   26,   03,   00,   00,   00,   CB,   50,   00,   00,   B0,   FF,   00,   A0,   00,   00,   60,   FF,   00,   F0,   00,   00,   10,   FF,   00,   40,   01,   00,   C0,   FE,   00,   D0,   01,   00,   08,   02,   00,   F8,   FD,   00
+}
+##############################NEED THIS LINE TO END FILE#####################################

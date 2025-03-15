@@ -1,0 +1,10 @@
+service kpoc_log /odm/bin/hw/kpoc_log
+    class core
+    user root
+    group root system
+    disabled
+    oneshot
+
+on property:ro.bootmode=charger && property:ro.soc.manufacturer=Mediatek
+    start kpoc_log
+

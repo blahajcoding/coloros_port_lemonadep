@@ -1,6 +1,6 @@
 out/
 tmp/
-./build/
+build/
 op9pfw.zip
 op10pfw.zip
 etc_base.zip

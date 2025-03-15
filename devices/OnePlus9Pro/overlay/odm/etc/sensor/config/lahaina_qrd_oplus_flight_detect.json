@@ -1,0 +1,27 @@
+{
+  "config":{
+    "hw_platform": ["MTP", "QRD"],
+    "soc_id": ["415", "439"]
+  },
+  "oplus_flight_detect_commom":{
+    "owner": "flight_detect",
+    ".config":{
+      "owner": "flight_detect",
+      "is_available":{ "type": "int", "ver": "0",
+        "data": "1"
+      },
+      "acc_threshold":{ "type": "flt", "ver": "0",
+        "data": "0.2"
+      },
+      "duration_threshold":{ "type": "flt", "ver": "0",
+        "data": "0.8"
+      },
+      "magnet_threshold_ratio":{ "type": "flt", "ver": "0",
+        "data": "0.2"
+      },
+      "magnet_threshold_value":{ "type": "flt", "ver": "0",
+        "data": "10"
+      }
+    }
+  }
+}
