@@ -1,34 +1,41 @@
 <div align="center">
 
 
-# ColorOS Porting Project for the OnePlus 9 Pro
+# OxygenOS/ColorOS Porting Project for the OnePlus 9 Pro
 
 </div>
 
 Original source can be found in [toraidl/coloros_port_kebab](https://github.com/toraidl/coloros_port_kebab/tree/staging)
 
 ## Tested devices and ROMs to be ported from
-LE2123_14.0.0.501(EX01) -> NE2213_15.0.0.401(CN01)
+- LE2123_14.0.0.730(EX01) ➡️ NE2213_15.0.0.401(EX01)
+- LE2123_14.0.0.730(EX01) ➡️ CPH2653_15.0.0.602(EX01)
 
 ## What's working?
 - Yes
 
-
 ## Bugs
-
+- Face unlock
+- Camera LUTs
 
 ## How to use
-- On any Red Hat, Debian or Arch based distro:
+- On any distro:
 ```shell
-    # Clone project
-    git clone https://github.com/toraidl/coloros_port_kebab.git
-    cd coloros_port_kebab
-    # Install dependencies
-    sudo ./setup.sh
-    # Start porting
-    sudo ./port.sh <baserom> <portrom>
+# Clone project
+git clone https://github.com/toraidl/coloros_port_kebab.git
+cd coloros_port_kebab
+# Install dependencies
+sudo ./setup.sh
+# Start porting
+sudo ./port.sh <baserom> <portrom>
 ```
+Other distros will need packages to be installed manually.
+
 - Base ROMs + ROMs to be ported from can be a download link, which in case check 4PDA or XDA. ZIP files are supported.
+
+# Want to port to the OnePlus 9?
+- Rename devices/OnePlus9Pro to OnePlus9
+- Edit bin/getSuperSize.sh and include your super size.
 
 ## Credits
 > In this project, some or all of the content is derived from the following open-source projects. Special thanks to the developers of these projects.
