@@ -153,12 +153,9 @@ elif [[ ${baserom_type} == 'br' ]];then
         rm -rf build/baserom/$i.new.dat* build/baserom/$i.transfer.list build/baserom/$i.patch.*
     done
 fi
-	blue "正在提取移植包 [payload.bin]" "Extracting files from PORTROM [payload.bin]"
-	payload-dumper --partitions ${port_partition} --out build/portrom/images/ $portrom
+        blue "正在提取移植包 [payload.bin]" "Extracting files from PORTROM [payload.bin]"
+        payload-dumper --partitions ${port_partition} --out build/portrom/images/ $portrom
     green "移植包 [payload.bin] img提取完毕" "[payload.bin] imgs extracted."
-
-
-
 for part in system product system_ext my_product my_manifest ;do
     extract_partition build/baserom/images/${part}.img build/baserom/images    
 done
@@ -243,8 +240,11 @@ port_my_product_type=$(< build/portrom/images/my_product/build.prop grep "ro.opl
 
 target_display_id=$(< build/portrom/images/my_manifest/build.prop grep "ro.build.display.id" |awk 'NR==1' |cut -d '=' -f 2 | sed 's/$port_device_code/$base_device_code)/g')
 
-target_display_id_show=$(< build/portrom/images/my_manifest/build.prop grep "ro.build.display.id.show" |awk 'NR==1' |cut -d '=' -f 2 | sed 's/$port_device_code/$base_device_code)/g')
+target_display_id_show=$(< build/portrom/images/my_manifest/build.prop grep "ro.build.display.id.show" | awk 'NR==1' | cut -d '=' -f 2 | sed -e 's/$port_device_code/$base_device_code/g ; s/(.*)/(ORB)/g')
+
 green "机型代号: 底包为 [${base_rom_model}], 移植包为 [${port_rom_model}]" "My Product Type: BASEROM: [${base_rom_model}], PORTROM: [${port_rom_model}]"
+
+target_display_version=$(< build/portrom/images/my_product/build.prop grep "ro.build.version.oplusrom.display" | awk 'NR==1' | cut -d '=' -f 2 | sed 's/$/ | @gradientorb/') 
 
 base_vendor_brand=$(< build/baserom/images/my_manifest/build.prop grep "ro.product.vendor.brand" |awk 'NR==1' |cut -d '=' -f 2)
 port_vendor_brand=$(< build/portrom/images/my_manifest/build.prop grep "ro.product.vendor.brand" |awk 'NR==1' |cut -d '=' -f 2)
@@ -254,7 +254,6 @@ portrom_version_security_patch=$(< build/portrom/images/my_manifest/build.prop g
 
 regionmark=$(< build/portrom/images/my_bigball/etc/region/build.prop grep "ro.vendor.oplus.regionmark" |awk 'NR==1' |cut -d '=' -f 2)
 
-
 if grep -q "ro.build.ab_update=true" build/portrom/images/vendor/build.prop;  then
     is_ab_device=true
 else
@@ -263,7 +262,7 @@ else
 fi
 
 if [[ ! -f build/portrom/images/system/system/bin/app_process32 ]]; then
-    blue "64bit only protrom detected. Pathcing 32bit "
+    blue "64-bit only ROM detected. Adding 32-bit support"
     sed -i "s/ro.system.product.cpu.abilist=.*/ro.system.product.cpu.abilist=arm64-v8a,armeabi-v7a,armeabi/g" build/portrom/images/system/system/build.prop
     sed -i "s/ro.system.product.cpu.abilist32=.*/ro.system.product.cpu.abilist32=armeabi-v7a,armeabi/g" build/portrom/images/system/system/build.prop
 
@@ -277,6 +276,8 @@ rm -rf build/portrom/images/my_manifest
 cp -rf build/baserom/images/my_manifest build/portrom/images/
 cp -rf build/baserom/images/config/my_manifest_* build/portrom/images/config/
 sed -i "s/ro.build.display.id=.*/ro.build.display.id=${target_display_id}/g" build/portrom/images/my_manifest/build.prop
+sed -i "s/ro.build.display.id.show=.*/ro.build.display.id=${target_display_id_show}/g" build/portrom/images/my_manifest/build.prop
+sed -i "s/ro.build.version.oplusrom.display=.*/ro.build.version.oplusrom.display=${target_display_version}/g" build/portrom/images/my_product/build.prop
 sed -i '/ro.build.version.release=/d' build/portrom/images/my_manifest/build.prop
 #其他机型可能没有default.prop
 for prop_file in $(find build/portrom/images/vendor/ -name "*.prop"); do
@@ -359,12 +360,14 @@ find tmp/services/ -type f -name "ReconcilePackageUtils.smali" | while read smal
 done
 
 if [[ ${port_android_version} == 15 ]];then
-    blue "修复ColorOS15/OxygenOS15 人脸识解锁问题" "COS15/OOS15: Fix Face Unlock for 8T/9R"
-    pushd tmp/services
-    patch -p1 < ${work_dir}/devices/${base_product_device}/0001-face-unlock-fix-for-op8t.patch
-    popd
+    # Fix may not be needed for the OnePlus 9 Pro
+    # blue "修复ColorOS15/OxygenOS15 人脸识解锁问题" "COS15/OOS15: Fix Face Unlock for 8T/9R"
+    # pushd tmp/services
+    # patch -p1 < ${work_dir}/devices/${base_product_device}/0001-face-unlock-fix-for-op8t.patch
+    # popd
     if [[ -f $old_face_unlock_app ]]; then
-        unzip -o ${work_dir}/devices/${base_product_device}/face_unlock_fix.zip -d ${work_dir}/build/portrom/images/
+        # unzip -o ${work_dir}/devices/${base_product_device}/face_unlock_fix.zip -d ${work_dir}/build/portrom/images/
+        rm -rf build/portrom/images/odm/bin/hw/vendor.oneplus.faceunlock.hal@1.0-service
         rm -rf build/portrom/images/odm/lib/vendor.oneplus.faceunlock.hal@1.0.so
         rm -rf build/portrom/images/odm/lib/vendor.oneplus.faceunlock.hal-V1-ndk_platform.so
         rm -rf build/portrom/images/odm/etc/vintf/manifest/manifest_opfaceunlock.xml
@@ -391,7 +394,7 @@ if [[ -f $targetOTA ]];then
     java -jar bin/apktool/APKEditor.jar b -f -i tmp/OTA -o $targetOTA
 fi
 
-# Dynimc Alert Whitlist 
+# Dynamic Alert Whitlist 
 targetSystemUI=$(find build/portrom/images/ -name "SystemUI.apk")
 blue "Adding music apps to Dynamic Alert whitelist"
 if [[ -f "$targetSystemUI" ]]; then
@@ -538,7 +541,7 @@ for i in $(find build/portrom/images -type f -name "build.prop");do
     sed -i "s/ro.product.build.date.utc=.*/ro.product.build.date.utc=${buildUtc}/g" ${i}
     sed -i "s/ro.system_ext.build.date=.*/ro.system_ext.build.date=${buildDate}/g" ${i}
     sed -i "s/ro.system_ext.build.date.utc=.*/ro.system_ext.build.date.utc=${buildUtc}/g" ${i}
-    sed -i "s/persist.sys.timezone=.*/persist.sys.timezone=Asia\/Shanghai/g" ${i}
+    sed -i "s/persist.sys.timezone=.*/persist.sys.timezone=Europe\/London/g" ${i}
     #全局替换device_code
     sed -i "s/$port_device_code/$base_device_code/g" ${i}
     sed -i "s/$port_rom_model/$base_rom_model/g" ${i}
@@ -611,9 +614,33 @@ else
     mv -fv build/portrom/images/my_product/etc/permissions/* tmp/etc/permissions/
     rm -rf build/portrom/images/my_product/etc/permissions/*.xml
 fi
-
-
-
+if [[ $regionmark == "CN" ]];then
+    blue "更新 Breeno 和更多附加功能" "Updating Breeno and adding a tad bit more"
+    \cp -rfv devices/ColorOS-CN/* build/portrom/images/
+    blue "Debloating China ROM..."
+    \rm -rf build/portrom/images/my_stock/priv-app/del-app/FinShellWallet
+    \rm -rf build/portrom/images/my_stock/priv-app/del-app/Gamecenter
+    \rm -rf build/portrom/images/my_stock/priv-app/del-app/FamilyGuard
+    \rm -rf build/portrom/images/my_stock/priv-app/del-app/KeKeThemeSpace
+    \rm -rf build/portrom/images/my_stock/priv-app/del-app/OPPOCommunity
+    \rm -rf build/portrom/images/my_stock/priv-app/del-app/SoftsimRedteaRoaming
+    \rm -rf build/portrom/images/my_stock/priv-app/del-app/OPBreathMode
+    \rm -rf build/portrom/images/my_stock/priv-app/del-app/KeKeUserCenterMember
+    \rm -rf build/portrom/images/my_stock/priv-app/del-app/Music
+    \rm -rf build/portrom/images/my_stock/priv-app/app/CloudService
+    \rm -rf build/portrom/images/my_stock/priv-app/app/ChildrenSpace
+    \rm -rf build/portrom/images/my_stock/priv-app/app/DigitalKeyFramework
+    \rm -rf build/portrom/images/my_stock/priv-app/app/Instant
+    \rm -rf build/portrom/images/my_stock/priv-app/app/InstantService
+    \rm -rf build/portrom/images/my_stock/priv-app/app/KeKePay
+    \rm -rf build/portrom/images/my_stock/priv-app/app/OWork
+    \rm -rf build/portrom/images/my_stock/priv-app/app/Pictorial
+    \rm -rf build/portrom/images/my_stock/priv-app/app/SecurePay
+fi
+if [[ $port_vendor_brand == "OnePlus" ]] && [[ $regionmark != "CN" ]];then
+    \cp -rfv devices/OxygenOS/* build/portrom/images/
+    \rm -rf build/portrom/images/my_product/priv-app/Velvet/
+fi
 cp -rf build/baserom/images/my_product/etc/permissions/*.xml build/portrom/images/my_product/etc/permissions/
 cp -rf build/baserom/images/my_product/etc/extension/*.xml build/portrom/images/my_product/etc/extension/
 cp -rf  build/baserom/images/my_product/etc/refresh_rate_config.xml build/portrom/images/my_product/etc/refresh_rate_config.xml
@@ -657,14 +684,22 @@ add_feature "oplus.software.support.zoom.multi_mode" build/portrom/images/my_pro
 add_feature "com.oplus.smartsidebar.space.roulette.support" build/portrom/images/my_product/etc/extension/com.oplus.app-features.xml
 add_feature "com.oplus.smartsidebar.space.roulette.bootreg" build/portrom/images/my_product/etc/extension/com.oplus.app-features.xml
 add_feature "com.oplus.infocollection.screen.recognition" build/portrom/images/my_product/etc/extension/com.oplus.app-features.xml
+add_feature "com.oplus.humming_bird_enable" build/portrom/images/my_product/etc/extension/com.oplus.app-features.xml
+add_feature "com.oplus.humming_bird_enable" build/portrom/images/my_stock/etc/extension/com.oplus.app-features.xml
+add_feature "oplus.software.vip_preload" build/portrom/images/my_stock/etc/extension/com.oplus.oplus-feature.xml
+add_feature "oplus.software.parallel_preload" build/portrom/images/my_stock/etc/extension/com.oplus.oplus-feature.xml
+add_feature "oplus.software.next_preload" build/portrom/images/my_stock/etc/extension/com.oplus.oplus-feature.xml
+add_feature "oplus.software.sau_preload" build/portrom/images/my_stock/etc/extension/com.oplus.oplus-feature.xml
+add_feature "oplus.software.pocketstudio.support" build/portrom/images/my_stock/etc/extension/com.oplus.oplus-feature.xml
 
 remove_feature "com.android.settings.processor_detail_gen2"
 remove_feature "com.android.settings.processor_detail"
-remove_feature "os.charge.settings.wirelesscharge.support"
-remove_feature "com.oplus.battery.wireless.charging.notificate"
-remove_feature "os.charge.settings.wirelesscharging.power"
-remove_feature "os.charge.settings.wirelesschargingcoil.position"
-remove_feature "oplus.power.onwirelesscharger.support"
+# nuh uh
+# remove_feature "os.charge.settings.wirelesscharge.support"
+# remove_feature "com.oplus.battery.wireless.charging.notificate"
+# remove_feature "os.charge.settings.wirelesscharging.power"
+# remove_feature "os.charge.settings.wirelesschargingcoil.position"
+# remove_feature "oplus.power.onwirelesscharger.support"
 remove_feature "os.charge.settings.batterysettings.batteryhealth"
 cp -rf  build/baserom/images/my_product/vendor/etc/* build/portrom/images/my_product/vendor/etc/
 
@@ -698,10 +733,6 @@ add_feature "oplus.software.speechassist.oneshot.support" build/portrom/images/m
 if [[ -f "tmp/etc/permissions/multimedia_privapp-permissions-oplus.xml" ]];then
     cp -rfv tmp/etc/permissions/multimedia_*.xml build/portrom/images/my_product/etc/permissions/
 fi
-
-# bootanimation
-rm -rf build/portrom/images/my_product/media/*
-cp -rf build/baserom/images/my_product/media/* build/portrom/images/my_product/media/
 
 rm -rf build/portrom/images/my_product/res/*
 cp -rf build/baserom/images/my_product/res/* build/portrom/images/my_product/res/
@@ -840,6 +871,7 @@ if [[ -d "devices/${base_product_device}/overlay" ]]; then
     \rm -fv build/portrom/images/vendor/lib64/libqfp-service.so
     \rm -fv build/portrom/images/vendor/bin/qfp-daemon
     \rm -fv build/portrom/images/vendor/etc/bin/init_qfp_daemon.rc
+    \rm -fv build/portrom/images/odm/vendor/firmware_mnt/*
     \cp -rfv devices/${base_product_device}/overlay/* build/portrom/images/
 else
     yellow "devices/${base_product_device}/overlay 未找到" "devices/${base_product_device}/overlay not found" 
