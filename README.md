@@ -24,8 +24,8 @@ Original source can be found in [toraidl/coloros_port_kebab](https://github.com/
 - On any distro:
 ```shell
 # Clone project
-git clone https://github.com/toraidl/coloros_port_kebab.git
-cd coloros_port_kebab
+git clone https://github.com/blahajcoding/coloros_port_lemonadep.git
+cd coloros_port_lemonadep
 # Install dependencies (Debian + Arch based distros only)
 sudo ./setup.sh
 # Start porting
