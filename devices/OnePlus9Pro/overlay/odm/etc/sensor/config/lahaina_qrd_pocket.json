@@ -1,0 +1,30 @@
+{
+  "config":{
+    "hw_platform": ["MTP", "QRD"],
+    "soc_id": ["415", "439"]
+  },
+  "pocket":{
+    "owner": "sns_pocket",
+    ".config":{
+      "owner": "sns_pocket",
+      "is_available":{ "type": "int", "ver": "0",
+        "data": "1"
+      },
+      "fold_type":{ "type": "int", "ver": "0",
+        "data": "2"
+      },
+      "prox_type":{ "type": "int", "ver": "0",
+        "data": "0"
+      },
+      "need_als":{ "type": "int", "ver": "0",
+        "data": "0"
+      },
+      "als_thrd_low":{ "type": "int", "ver": "0",
+        "data": "0"
+      },
+      "als_thrd_high":{ "type": "int", "ver": "0",
+        "data": "0"
+      }
+    }
+  }
+}

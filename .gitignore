@@ -1,3 +1,10 @@
 out/
 tmp/
-./build/
+build/
+op9pfw.zip
+op10pfw.zip
+fx7fw.zip
+etc_base.zip
+etc_port.zip
+devices/OxygenOS/*
+devices/ColorOS-CN/*

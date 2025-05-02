@@ -1,0 +1,2 @@
+on post-fs-data
+    mkdir /data/vendor/camera_update 0777 camera camera

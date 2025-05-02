@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<packages>
+     <default-grant-permissions package="com.android.nfc" >
+        <permission name="android.permission.ACCESS_COARSE_LOCATION"/>
+        <permission name="android.permission.ACCESS_FINE_LOCATION"/>
+        <permission name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    </default-grant-permissions>
+</packages>

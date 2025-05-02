@@ -1,0 +1,77 @@
+#############################libnfc_accesscard_config.conf###################################
+# Force P2P to only listen for the following technology(s).
+# The bits are defined as tNFA_TECHNOLOGY_MASK in nfa_api.h.
+# Default is NFA_TECHNOLOGY_MASK_A | NFA_TECHNOLOGY_MASK_F |
+#            NFA_TECHNOLOGY_MASK_A_ACTIVE | NFA_TECHNOLOGY_MASK_F_ACTIVE
+#
+# Notable bits:
+# NFA_TECHNOLOGY_MASK_A	            0x01    /* NFC Technology A             */
+# NFA_TECHNOLOGY_MASK_F	            0x04    /* NFC Technology F             */
+# NFA_TECHNOLOGY_MASK_A_ACTIVE      0x40    /* NFC Technology A active mode */
+# NFA_TECHNOLOGY_MASK_F_ACTIVE      0x80    /* NFC Technology F active mode */
+P2P_LISTEN_TECH_MASK=0x44
+
+###############################################################################
+# Force tag polling for the following technology(s).
+# The bits are defined as tNFA_TECHNOLOGY_MASK in nfa_api.h.
+# Default is NFA_TECHNOLOGY_MASK_A | NFA_TECHNOLOGY_MASK_B |
+#            NFA_TECHNOLOGY_MASK_F | NFA_TECHNOLOGY_MASK_ISO15693 |
+#            NFA_TECHNOLOGY_MASK_B_PRIME |
+#            NFA_TECHNOLOGY_MASK_A_ACTIVE | NFA_TECHNOLOGY_MASK_F_ACTIVE.
+#
+# Notable bits:
+# NFA_TECHNOLOGY_MASK_A             0x01    /* NFC Technology A             */
+# NFA_TECHNOLOGY_MASK_B             0x02    /* NFC Technology B             */
+# NFA_TECHNOLOGY_MASK_F             0x04    /* NFC Technology F             */
+# NFA_TECHNOLOGY_MASK_ISO15693      0x08    /* Proprietary Technology       */
+# NFA_TECHNOLOGY_MASK_A_ACTIVE      0x40    /* NFC Technology A active mode */
+# NFA_TECHNOLOGY_MASK_F_ACTIVE      0x80    /* NFC Technology F active mode */
+POLLING_TECH_MASK=0x4F
+
+#chang default accesscard phase to 135° from oplus accesscard test on 2020/06/23
+# NXP_RF_CONF_BLK_1 block
+# A0,   6A,   10,   1C,   02,   1C,   02,   1C,   02,   1C,   02,   00,   00,   00,   00,   00,   00,   00,   00
+#add A0, 85, 04, 50, 0A, A8, 2C for mute RATS on Mifare 1K 2020.04.02 bugid:2917116
+# NXP_RF_CONF_BLK_12 block
+# A1,   0E,   02,   60,   00, change Tx2Rx time, the FW default value is 0x60
+# The access card Tx2Rx will be set 0x40 and the A0,   0D,   06,   62/67,   32 register will be set 0xAE/0x0E -> 0x2E
+#Add pharse auto function control:A0,   28,   26,   03,   00,   00,   00,   CB  2021-06-02 added by LiuWenJie
+#register addr :A0,   28,   26 ;
+# 03 -->Field On ,mobile reply REQA count，set ->00，disable this function
+# 00 -->Field On ,mobile reply REQB count，set ->00，disable this function
+# 00 -->Field On ,mobile reply REQF count，set ->00，disable this function
+# 00 -->Field On ,14443-4 reply NAK count，set ->00，disable this function
+# CB -->11001011 8bit set 1 mean loop set phase , 7bit set 1 enable NCI log;  1011 mean 11 array phase
+#00B4(45°,FDT default)
+#FF10(-60°,FDT default)
+#02D0(180°,FDT default)
+#0384(225°,FDT default)
+#01E0(120°,FDT default)
+#0000(0°,FDT 7C)
+#0000(0°,FDT 80)
+#00B4(45°,FDT 7C)
+#00B4(45°,FDT 80)
+#FF10(-60°,FDT 7C)
+#FF10(-60°,FDT 80)
+
+NXP_RF_CONF_BLK_2={
+		  20,   02,   CC,   01,
+          A0,   34,   C8,   23,   04,   3D,   01,   04,   19,   14,   07,   00,   00,   D9,   08,   00,   00,   9E,   0A,   00,   00,   9E,   0A,   00,   00,   18,   0C,   00,   00,   18,   0C,   00,   00,   DD,   0D,   00,   00,   DD,   0D,   00,   00,   F5,   10,   00,   00,   6F,   12,   00,   00,   6F,   12,   00,   00,   98,   17,   00,   00,   98,   17,   00,   00,   98,   17,   00,   00,   98,   17,   00,   00,   98,   17,   00,   00,   FC,   3A,   00,   00,   FC,   3A,   00,   00,   FC,   3A,   00,   00,   FC,   3A,   00,   00,   FC,   3A,   00,   00,   FC,   3A,   00,   00,   FC,   3A,   00,   00,   FC,   3A,   00,   00,   04,   19,   14,   07,   00,   00,   D9,   08,   00,   00,   9E,   0A,   00,   00,   9E,   0A,   00,   00,   18,   0C,   00,   00,   18,   0C,   00,   00,   DD,   0D,   00,   00,   DD,   0D,   00,   00,   F5,   10,   00,   00,   6F,   12,   00,   00,   6F,   12,   00,   00,   98,   17,   00,   00,   98,   17,   00,   00,   98,   17,   00,   00,   98,   17,   00,   00,   98,   17,   00,   00,   FC,   3A,   00,   00,   FC,   3A,   00,   00,   FC,   3A,   00,   00,   FC,   3A,   00,   00,   FC,   3A,   00,   00,   FC,   3A,   00,   00,   FC,   3A,   00,   00,   FC,   3A,   00,   00
+}
+
+OPLUS_CONF_EXTN={
+	      20,   02,   8D,   0C,
+	      A1,   0E,   02,   40,   00,
+	      A1,   35,   01,   0A,
+	      A1,   13,   01,   14,
+	      A0,   85,   04,   50,   08,   A8,   2C,
+	      A0,   6A,   10,   B4,   00,   B4,   00,   B4,   00,   B4,   00,   00,   00,   00,   00,   00,   00,   00,   00,
+	      A0,   9E,   0C,   07,   98,   17,   50,   00,   50,   00,   3C,   64,   00,   00,   00,
+	      A0,   0D,   06,   82,   82,   49,   80,   00,   00,
+	      A0,   0D,   06,   80,   82,   49,   80,   00,   00,
+	      A0,   0D,   06,   62,   32,   AE,   00,   7F,   00,
+	      A0,   0D,   06,   67,   32,   AE,   00,   1F,   00,
+	      A0,   0D,   06,   80,   7D,   A0,   00,   94,   BF,
+	      A0,   28,   26,   03,   00,   00,   00,   CB,   50,   00,   00,   B0,   FF,   00,   A0,   00,   00,   60,   FF,   00,   F0,   00,   00,   10,   FF,   00,   40,   01,   00,   C0,   FE,   00,   D0,   01,   00,   08,   02,   00,   F8,   FD,   00
+}
+##############################NEED THIS LINE TO END FILE#####################################

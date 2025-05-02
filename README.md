@@ -51,3 +51,4 @@ Other distros will need packages to be installed manually.
 - ["coloros_port_kebab" by Bruce Teng](https://github.com/toraidl/coloros_port_kebab/tree/staging)
 - "ColorOS 15 for the OnePlus 9RT" by color591
 - etc
+
