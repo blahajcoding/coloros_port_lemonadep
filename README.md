@@ -9,7 +9,8 @@ Original source can be found in [toraidl/coloros_port_kebab](https://github.com/
 
 ## Tested devices and ROMs to be ported from
 - LE2123_14.0.0.730(EX01) ➡️ NE2213_15.0.0.401(EX01)
-- LE2123_14.0.0.730(EX01) ➡️ CPH2653_15.0.0.602(EX01)
+- LE2123_14.0.0.730(EX01) ➡ CPH2653_15.0.0.602(EX01)
+- LE2123_14.0.0.730(EX01) ➡️ PHY110_15.0.0.801(CN01)
 
 ## What's working?
 - Yes
@@ -17,14 +18,15 @@ Original source can be found in [toraidl/coloros_port_kebab](https://github.com/
 ## Bugs
 - Face unlock
 - Camera LUTs
+- China ROM is bloated...
 
 ## How to use
 - On any distro:
 ```shell
 # Clone project
-git clone https://github.com/toraidl/coloros_port_kebab.git
-cd coloros_port_kebab
-# Install dependencies
+git clone https://github.com/blahajcoding/coloros_port_lemonadep.git
+cd coloros_port_lemonadep
+# Install dependencies (Debian + Arch based distros only)
 sudo ./setup.sh
 # Start porting
 sudo ./port.sh <baserom> <portrom>
