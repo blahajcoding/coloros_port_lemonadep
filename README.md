@@ -1,7 +1,7 @@
 <div align="center">
 
-
-# OxygenOS/ColorOS Porting Project for the OnePlus 9 Pro
+# All good things must come to an end. Please check out the original source, as it is *way* better than my code.
+## OxygenOS/ColorOS Porting Project for the OnePlus 9 Pro
 
 </div>
 
